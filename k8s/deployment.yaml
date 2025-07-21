@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: java-api-service
+  labels:
+    app: java-api-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: java-api-service
+  template:
+    metadata:
+      labels:
+        app: java-api-service
+    spec:
+      containers:
+      - name: java-api-service
+        image: java-api-service:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: "kubernetes"
+        - name: SPRING_DATASOURCE_URL
+          value: "jdbc:postgresql://postgres:5432/javaapiservice"
+        - name: SPRING_DATASOURCE_USERNAME
+          value: "javaapiservice"
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: password
